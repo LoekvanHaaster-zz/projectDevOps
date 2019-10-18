@@ -1,15 +1,12 @@
 {
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
 	"contentVersion": "1.0.0.0",
-	"parameters": {
-		"storageAccountName": {
-			"value": "store1345loek"
-		},
-		"adminUsername": {
-			"value": "Loek"
-		},
-		"adminPassword": {
-			"value": "HamKaas143Kaas"
-		}
-	}
+  "parameters": {
+    "SSHkey": {
+      "value": "https://gist.github.com/LoekvanHaaster/3130a8f29c8378ace80961cb111a639d"
+    },
+    "adminUsername": {
+      "value": "Zilk"
+    }
+  }
 }
