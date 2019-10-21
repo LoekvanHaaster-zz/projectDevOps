@@ -1,6 +1,6 @@
 {
-	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-	"contentVersion": "1.0.0.0",
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
   "parameters": {
     "adminUsername": {
       "type": "string",
@@ -389,5 +389,19 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "privateip0": {
+      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', concat(parameters('nicNamePrefix'), '0'))).ipConfigurations[0].properties.privateIPAddress]",
+      "type": "object"
+    },
+    "privateip1": {
+      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', concat(parameters('nicNamePrefix'), '1'))).ipConfigurations[0].properties.privateIPAddress]",
+      "type": "object"
+    },
+    "privateip2": {
+      "value": "[reference(resourceId('Microsoft.Network/networkInterfaces', concat(parameters('nicNamePrefix'), '2'))).ipConfigurations[0].properties.privateIPAddress]",
+      "type": "object"
+    }
+  }
 }
