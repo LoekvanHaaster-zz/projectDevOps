@@ -5,7 +5,7 @@
     "adminUsername": {
       "type": "string",
       "metadata": {
-        "description": "Admin username"
+        "description": "User name for the Virtual Machines."
       }
     },
     "SSHkey": {
@@ -14,16 +14,9 @@
         "description": "SSH key"
       }
     },
-    "nsgName": {
-      "type": "string",
-      "defaultValue": "NSG-VM",
-      "metadata": {
-        "description": "Name for nsg group private subnet"
-      }
-    },
     "vmNamePrefix": {
       "type": "string",
-      "defaultValue": "VM-",
+      "defaultValue": "VM",
       "metadata": {
         "description": "Prefix to use for VM names"
       }
@@ -42,11 +35,11 @@
         "description": "Load Balancer name"
       }
     },
-    "nicNamePrefix": {
+    "nicName": {
       "type": "string",
       "defaultValue": "nic",
       "metadata": {
-        "description": "Network Interface name prefix"
+        "description": "Network Interface name"
       }
     },
     "publicIPAddressName": {
@@ -54,20 +47,6 @@
       "defaultValue": "PublicIP",
       "metadata": {
         "description": "Public IP Name"
-      }
-    },
-    "vnetName": {
-      "type": "string",
-      "defaultValue": "VNET",
-      "metadata": {
-        "description": "VNET name"
-      }
-    },
-    "vnetNameBuildAgent": {
-      "type": "string",
-      "defaultValue": "VNET-BuildAgent",
-      "metadata": {
-        "description": "VNET name build agent"
       }
     },
     "vmSize": {
@@ -79,27 +58,33 @@
     }
   },
   "variables": {
-    "storageAccountType": "Standard_LRS",
-    "storageAccountName": "[concat('store', uniquestring(resourceGroup().id))]",
+    "storageAccount": {
+      "name": "[concat('store-', uniqueString(resourceGroup().id))]",
+      "type": "Standard_LRS"
+    },
     "availabilitySetName": "AvSet",
-    "vNet1tovNet2PeeringName": "[concat(parameters('vnetName'), '-', parameters('vNetNameBuildAgent'))]",
-    "vNet2tovNet1PeeringName": "[concat(parameters('vNetNameBuildAgent'), '-', parameters('vnetName'))]",
-    "addressPrefix": "10.0.0.0/16",
-    "subnetName": "Subnet",
-    "subnetPrefix": "10.0.0.0/24",
-    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables ('subnetName'))]",
-    "subnetNameLB": "SubnetLB",
-    "subnetPrefixLB": "10.0.1.0/24",
-    "subnetRefLB": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables ('subnetNameLB'))]",
-    "publicIPAddressType": "Dynamic",
-    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]",
+    "publicIP": {
+      "publicIPAddressType": "Dynamic",
+      "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]"
+    },
+    "vNet": {
+      "name": "vNet",
+      "addressSpacePrefix": "10.0.0.0/16",
+      "subnetName": "subnetVMs",
+      "subnetPrefix": "10.0.0.0/24",
+      "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNet').name, variables('vNet').subnetName)]",
+      "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('vNet').name)]",
+      "subnet": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('vNet').name), '/subnets/subnet1')]"
+    },
+    "loadbalancer": {
+      "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
+      "frontEndIPConfigID": "[concat(variables('loadbalancer').lbID,'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
+      "lbPoolID": "[concat(variables('loadbalancer').lbID,'/backendAddressPools/BackendPool1')]",
+      "lbProbeID": "[concat(variables('loadbalancer').lbID,'/probes/tcpProbe')]"
+    },
     "numberOfInstances": 3,
-    "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
-    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
-    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
-    "imagePublisher": "Canonical",
-    "imageOffer": "UbuntuServer",
+    "linuxImagePublisher": "Canonical",
+    "linuxImageOffer": "UbuntuServer",
     "linuxConfiguration": {
       "disablePasswordAuthentication": true,
       "ssh": {
@@ -115,11 +100,11 @@
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
+      "name": "[variables('storageAccount').name]",
       "apiVersion": "2015-05-01-preview",
       "location": "[resourceGroup().location]",
       "properties": {
-        "accountType": "[variables('storageAccountType')]"
+        "accountType": "[variables('storageAccount').type]"
       }
     },
     {
@@ -139,114 +124,41 @@
       "name": "[parameters('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
       "properties": {
-        "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
-      }
-    },
-
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[parameters('nsgName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "HTTP",
-            "properties": {
-              "description": "Allows HTTP traffic",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          }
-        ]
+        "publicIPAllocationMethod": "[variables('publicIP').publicIPAddressType]"
       }
     },
     {
-      "apiVersion": "2017-10-01",
+      "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/virtualNetworks",
-      "name": "[parameters('vnetName')]",
+      "name": "[variables('vNet').name]",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('nsgName'))]"
-      ],
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('addressPrefix')]"
+            "[variables('vNet').addressPrefix]"
           ]
         },
         "subnets": [
           {
-            "name": "[variables('subnetName')]",
+            "name": "[variables('vNet').subnetName]",
             "properties": {
-              "addressPrefix": "[variables('subnetPrefix')]",
-              "networkSecurityGroup": {
-                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsgName'))]"
-              }
-            }
-          },
-          {
-            "name": "[variables('subnetNameLB')]",
-            "properties": {
-              "addressPrefix": "[variables('subnetPrefixLB')]"
+              "addressPrefix": "[variables('vNet').subnetPrefix]"
             }
           }
         ]
-      }
-    },
-    {
-      "apiVersion": "2016-06-01",
-      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-      "name": "[concat(parameters('vNetNameBuildAgent'), '/', variables('vNet2tovNet1PeeringName'))]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
-      ],
-      "properties": {
-        "allowVirtualNetworkAccess": true,
-        "allowForwardedTraffic": false,
-        "allowGatewayTransit": false,
-        "useRemoteGateways": false,
-        "remoteVirtualNetwork": {
-          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vNetName'))]"
-        }
-      }
-    },
-    {
-      "apiVersion": "2016-06-01",
-      "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
-      "name": "[concat(parameters('vNetName'), '/', variables('vNet1tovNet2PeeringName'))]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
-      ],
-      "properties": {
-        "allowVirtualNetworkAccess": true,
-        "allowForwardedTraffic": false,
-        "allowGatewayTransit": false,
-        "useRemoteGateways": false,
-        "remoteVirtualNetwork": {
-          "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetNameBuildAgent'))]"
-        }
       }
     },
     {
       "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('nicNamePrefix'), copyindex())]",
+      "name": "[concat(parameters('nicName'), copyindex())]",
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "nicLoop",
         "count": "[variables('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('vNet').name)]",
         "[concat('Microsoft.Network/loadBalancers/', parameters('lbName'))]"
       ],
       "properties": {
@@ -256,11 +168,16 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[variables('vNet').subnetRef]"
               },
               "loadBalancerBackendAddressPools": [
                 {
-                  "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
+                  "id": "[concat(variables('loadbalancer').lbID, '/backendAddressPools/BackendPool1')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat(variables('loadbalancer').lbID, '/inboundNatRules/RDP-VM', copyindex())]"
                 }
               ]
             }
@@ -274,7 +191,6 @@
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetName'))]",
         "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIPAddressName'))]"
       ],
       "properties": {
@@ -282,11 +198,9 @@
           {
             "name": "LoadBalancerFrontEnd",
             "properties": {
-              "subnet": {
-                "id": "[variables('subnetRefLB')]"
-              },
-              "privateIPAddress": "10.0.1.6",
-              "privateIPAllocationMethod": "Static"
+              "publicIPAddress": {
+                "id": "[variables('publicIP').publicIPAddressID]"
+              }
             }
           }
         ],
@@ -295,15 +209,53 @@
             "name": "BackendPool1"
           }
         ],
+        "inboundNatRules": [
+          {
+            "name": "RDP-VM0",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('loadbalancer').frontEndIPConfigID]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 50001,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "RDP-VM1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('loadbalancer').frontEndIPConfigID]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 50002,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "RDP-VM2",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('loadbalancer').frontEndIPConfigID]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 50003,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          }
+        ],
         "loadBalancingRules": [
           {
             "name": "LBRule",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
+                "id": "[variables('loadbalancer').frontEndIPConfigID]"
               },
               "backendAddressPool": {
-                "id": "[variables('lbPoolID')]"
+                "id": "[variables('loadbalancer').lbPoolID]"
               },
               "protocol": "Tcp",
               "frontendPort": 80,
@@ -311,7 +263,7 @@
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 5,
               "probe": {
-                "id": "[variables('lbProbeID')]"
+                "id": "[variables('loadbalancer').lbProbeID]"
               }
             }
           }
@@ -339,8 +291,8 @@
         "count": "[variables('numberOfInstances')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('nicNamePrefix'), copyindex())]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').name)]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'), copyindex())]",
         "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
       ],
       "properties": {
@@ -358,8 +310,8 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[variables('imagePublisher')]",
-            "offer": "[variables('imageOffer')]",
+            "publisher": "[variables('linuxImagePublisher')]",
+            "offer": "[variables('linuxImageOffer')]",
             "sku": "[parameters('ubuntuOSVersion')]",
             "version": "latest"
           },
@@ -377,14 +329,14 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('nicNamePrefix'), copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('nicName'), copyindex()))]"
             }
           ]
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccount').name), '2016-01-01').primaryEndpoints.blob)]"
           }
         }
       }

@@ -3,7 +3,7 @@
 	"contentVersion": "1.0.0.0",
   "parameters": {
     "SSHkey": {
-      "value": "https://gist.github.com/LoekvanHaaster/3130a8f29c8378ace80961cb111a639d"
+      "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC5ztnUmp/sULbRmpuPVgHFlJNlEc9X/hKVCmfVpZ7w1LjlWuQNkkE8VgBFtP3Q99XsXKcnFpPJ6znBnDfkwWJWZ0st3E/YC3EvmUzMDttvfSuffE3y1RW2ZOb5bq5Ft1RI9GL4kprFWijAzTviUFaPG+DosUoKSX/EbGZlZ8//BttfCmTIvl4qgS1btpn7orwRVNPpK7nWRXlTeyoBwAbAQeSIDYFEc0LvlcKqR/1BIuDPfvLlGeQSHo7kRmPYKuE5VWdqIzBnROtTCmIn5wUxdRvBPtHe/N0n/E11T/zUsAXzYymJ73X0pZuOlsEkivZ4U1nib+hHjzT2ycBYtpzyEAH/Kj44UgujaVxWpMKL3DkASmc1VBlWordJgNLapZ6k3u/2JGb86yiA6+yRnvu6eWhx8ofhdOTPxHDmok/uZFH/PcidgHJ5PUv7bzA0fW6U/xzYft3qnwn46VRlSk3E/lmx8kfY5hzhV9EvkA9NVeNxdG5e/KNzq5MMxXy8eOwZ/k6Gwf61ci01z7CyZ7F93zvoevKT1CYrwB8R+iw7HBz7j6e4cDuyylmplIgcb8GRlJBIF6xgWOKyX2elQX9DwAFbBQ9QITvDqx78rYABXboK3i2utE1YvUTHx86vH1+el8DCW2pWCmRWbdxGjY2QrLNAShyHTZ5P2aIoL6ExFQ== loekvanhaaster@hotmail.com"
     },
     "adminUsername": {
       "value": "Zilk"
