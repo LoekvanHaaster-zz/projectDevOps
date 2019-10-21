@@ -1,0 +1,10 @@
+[slaves]
+server-01 ansible_host=10.0.0.4     ansible_user=Zilk
+server-02 ansible_host=10.0.0.5    	ansible_user=Zilk
+server-03 ansible_host=10.0.0.6		ansible_user=Zilk
+
+[local]
+server-00 ansible_host=localhost    ansible_user=Loek
+
+[local:vars]
+ansible_connection = local
