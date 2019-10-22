@@ -28,6 +28,4 @@ RUN set -x \
     && docker-run-bootstrap \
     && docker-image-cleanup
 
-EXPOSE 80 443
-
 COPY index.php /usr/local/apache2/htdocs/
