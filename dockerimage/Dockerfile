@@ -1,3 +1,8 @@
+#+++++++++++++++++++++++++++++++++++++++
+# Dockerfile for webdevops/php-apache:ubuntu-18.04
+#    -- automatically generated  --
+#+++++++++++++++++++++++++++++++++++++++
+
 FROM webdevops/php:ubuntu-18.04
 
 ENV WEB_DOCUMENT_ROOT=/app \
