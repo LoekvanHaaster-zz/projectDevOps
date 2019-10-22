@@ -2,7 +2,7 @@
 - hosts: managers
 
   vars:
-    default_save_path: /home/Loek/vars.yml
+    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
     default_owner: Loek
     default_group: Loek
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
