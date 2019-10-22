@@ -8,11 +8,6 @@
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
-    - name: Include vars of vars.yaml into the 'vars' variable
-      include_vars:
-        file: "{{ default_save_path }}"
-        name: vars
-
     - name: Remove potential existing swarm hosts
       docker_swarm:
         state: absent
