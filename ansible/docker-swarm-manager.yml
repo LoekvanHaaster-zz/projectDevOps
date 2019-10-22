@@ -2,9 +2,9 @@
 - hosts: managers
 
   vars:
-    default_save_path: /home/Zilk/vars.yml
-    default_owner: Zilk
-    default_group: Zilk
+    default_save_path: /home/Loek/vars.yml
+    default_owner: Loek
+    default_group: Loek
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
@@ -20,8 +20,6 @@
         advertise_addr: 10.0.0.4:2377
       become: yes
       register: local_own_swarm
-
-    - debug: var={{ ansible_facts }}
 
     - set_fact:
         worker_join_token: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
