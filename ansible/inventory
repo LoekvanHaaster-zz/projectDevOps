@@ -1,8 +1,19 @@
-[slaves]
-server-01 ansible_host=10.0.0.4 ansible_user=Zilk
+[managers]
+manager-01      ansible_host=10.0.0.4          ansible_user=amynicolec
+
+[workers]
+worker-01       ansible_host=10.0.0.5          ansible_user=amynicolec
+worker-02       ansible_host=10.0.0.5          ansible_user=amynicolec
+worker-03       ansible_host=10.0.0.5          ansible_user=amynicolec
 
 [local]
-server-00 ansible_host=localhost ansible_user=Loek
+server-02       ansible_host=localhost          ansible_user=amynicolec
+
+[managers:vars]
+ansible_connection = local
+
+[workers:vars]
+ansible_connection = local
 
 [local:vars]
 ansible_connection = local
