@@ -81,6 +81,7 @@
   "variables": {
     "storageAccountType": "Standard_LRS",
     "storageAccountName": "[concat('store', uniquestring(resourceGroup().id))]",
+    "routeTableName":  "routeTable",
     "availabilitySetName": "AvSet",
     "vNet1tovNet2PeeringName": "[concat(parameters('vnetName'), '-', parameters('vNetNameBuildAgent'))]",
     "vNet2tovNet1PeeringName": "[concat(parameters('vNetNameBuildAgent'), '-', parameters('vnetName'))]",
@@ -91,9 +92,13 @@
     "subnetNameLB": "SubnetLB",
     "subnetPrefixLB": "10.0.1.0/24",
     "subnetRefLB": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables ('subnetNameLB'))]",
-    "publicIPAddressType": "Dynamic",
+    "azureFirewallSubnetName": "AzureFirewallSubnet",
+    "azureFirewallSubnetPrefix": "10.0.2.0/24",
+    "azureFirewallSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables ('azureFirewallSubnetName'))]",
+    "publicIPAddressType": "Static",
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('publicIPAddressName'))]",
     "numberOfInstances": 3,
+    "firewallName":  "firewall",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
@@ -123,6 +128,25 @@
       }
     },
     {
+      "type": "Microsoft.Network/routeTables",
+      "name": "[variables('routeTableName')]",
+      "apiVersion": "2019-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "disableBgpRoutePropagation": false,
+        "routes": [
+          {
+            "name": "AzfwDefaultRoute",
+            "properties": {
+              "addressPrefix": "0.0.0.0/0",
+              "nextHopType": "VirtualAppliance",
+              "nextHopIpAddress": "[concat(substring(variables('azureFirewallSubnetPrefix'), 0, 7), '4')]"
+            }
+          }
+        ]
+      }
+    },
+    {
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[variables('availabilitySetName')]",
       "apiVersion": "2016-04-30-preview",
@@ -138,6 +162,9 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[parameters('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
       "properties": {
         "publicIPAllocationMethod": "[variables('publicIPAddressType')]"
       }
@@ -195,6 +222,12 @@
             "name": "[variables('subnetNameLB')]",
             "properties": {
               "addressPrefix": "[variables('subnetPrefixLB')]"
+            }
+          },
+          {
+            "name": "[variables('azureFirewallSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('azureFirewallSubnetPrefix')]"
             }
           }
         ]
@@ -274,8 +307,7 @@
       "type": "Microsoft.Network/loadBalancers",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetName'))]",
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIPAddressName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetName'))]"
       ],
       "properties": {
         "frontendIPConfigurations": [
@@ -406,6 +438,61 @@
           }
         }
       ]
+    },
+    {
+      "apiVersion": "2019-04-01",
+      "type": "Microsoft.Network/azureFirewalls",
+      "name": "[variables('firewallName')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "azureFirewallIpConfigurations",
+            "properties": {
+              "subnet": {
+                "id": "[variables('azureFirewallSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddressName'))]"
+              }
+            }
+          }
+        ],
+        "natRuleCollections": [
+          {
+            "name": "natRc1",
+            "properties": {
+              "priority": "100",
+              "action": {
+                "type": "DNAT"
+              },
+              "rules": [
+                {
+                  "name": "natRule1",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "destinationAddresses": [
+                    "[reference(variables('publicIPAddressID')).IpAddress]"
+                  ],
+                  "destinationPorts": [
+                    "80"
+                  ],
+                  "protocols": [
+                    "TCP"
+                  ],
+                  "translatedAddress": "10.0.1.6",
+                  "translatedPort": "80"
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   ],
   "outputs": {
