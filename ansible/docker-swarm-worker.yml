@@ -1,0 +1,25 @@
+---
+- hosts: workers
+
+  vars:
+    own_ip = "{{ ansible_facts.eth0.ipv4.address }}"
+
+  tasks:
+    - name: Include vars of vars.yaml into the 'vars'
+      include_vars:
+        file: "{{ default_save_path }}"
+        name: vars
+
+    - name: Remove potential existing swarm hosts
+      docker_swarm:
+        state: absent
+        force: true
+      become: yes
+
+    - name: Add nodes
+      docker_swarm:
+        state: join
+        advertise_addr: "{{ own_ip }}"
+        join_token: vars.frank
+        remote_addrs: 10.0.0.4:2377
+      become: yes
