@@ -21,8 +21,6 @@
       become: yes
       register: local_own_swarm
 
-    - debug: var={{ ansible_facts }}
-
     - set_fact:
         worker_join_token: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
         cacheable: yes
