@@ -10,7 +10,6 @@
       copy:
         src: /home/Loek/manager-01/home/Zilk/vars.yml
         dest: "{{ default_save_path }}"
-        remote_src: yes
     
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
