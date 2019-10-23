@@ -36,8 +36,8 @@
       file:
         path: "/home/Zilk/vars"
         state: directory
-        owner: "{{ default_owner }}"
-        group: "{{ default_group }}"
+        owner: "root"
+        group: "root"
         mode: '0644'
         
     - name: Create vars.yml file and set file ownership, group and permissions
