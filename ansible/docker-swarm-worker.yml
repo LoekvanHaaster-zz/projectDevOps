@@ -2,14 +2,9 @@
 - hosts: workers
 
   vars:
-    default_save_path: /home/Zilk/vars.yml
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
-    - name: copy vars.yml to workers
-      copy:
-        src: /home/Loek/manager-01/home/Zilk/vars.yml
-        dest: "{{ default_save_path }}"
     
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
@@ -32,5 +27,5 @@
         state: join
         advertise_addr: "{{ own_ip }}"
         join_token: "{{ frank }}"
-        remote_addrs: "[ {{ tiffany }} ]"
+        remote_addrs: "{{ tiffany }}"
       become: yes
