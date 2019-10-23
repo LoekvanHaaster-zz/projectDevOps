@@ -6,6 +6,12 @@
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
+    - name: copy vars.yml to workers
+      copy:
+        src: /home/Loek/manager-01/home/Zilk/vars.yml
+        dest: "{{ default_save_path }}"
+        remote_src: yes
+    
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
         file: "{{ default_save_path }}"
