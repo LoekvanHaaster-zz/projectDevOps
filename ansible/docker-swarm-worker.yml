@@ -13,7 +13,8 @@
     
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
-        file: "{{ default_save_path }}"
+        dir: /home/Zilk
+        files_matching: vars.yaml
         name: vars
 
     - name: Remove potential existing swarm hosts
