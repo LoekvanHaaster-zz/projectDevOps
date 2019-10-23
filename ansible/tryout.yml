@@ -31,3 +31,4 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
+        executable: /usr/bin/python
