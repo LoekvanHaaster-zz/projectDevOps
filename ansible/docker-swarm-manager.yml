@@ -44,8 +44,8 @@
       file:
         path: "/home/Zilk/vars/vars.yml"
         state: touch
-        owner: "{{ default_owner }}"
-        group: "{{ default_group }}"
+        owner: "root"
+        group: "root"
         mode: '0644'
 
     - name: Store variable in file
