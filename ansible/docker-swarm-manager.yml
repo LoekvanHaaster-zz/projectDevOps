@@ -60,7 +60,7 @@
         state: absent
         regexp: '^# END'
         
-    - name: Get vars.yml from manager
+    - name: Copy vars.yml from manager to buildagent
       fetch:
         src: "{{ default_save_path }}"
         dest: /home/Loek
