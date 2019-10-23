@@ -13,8 +13,7 @@
     
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
-        dir: /home/Loek/manager-01/home/Zilk
-        files_matching: vars.yaml
+        file: /home/Loek/manager-01/home/Zilk/vars.yml
         
     - debug:
         msg: "{{ frank }}"
