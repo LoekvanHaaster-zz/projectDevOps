@@ -17,7 +17,7 @@
     - name: Create a swarm host and prepare to save to set_fact
       docker_swarm:
         state: present
-        advertise_addr: 10.0.0.4:2377
+        advertise_addr: "{{ own_ip+':2377' }}"
       become: yes
       register: local_own_swarm
 
@@ -46,6 +46,7 @@
         block: |
           ---
           frank: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
+          tiffany: "{{ own_ip+':2377' }}"
 
     - name: Remove block markers
       lineinfile:
@@ -59,10 +60,10 @@
         state: absent
         regexp: '^# END'
 
-    - name: Add nodes
-      docker_swarm:
-        state: join
-        advertise_addr: "{{ own_ip }}"
-        join_token: vars.frank
-        remote_addrs: 10.0.0.4:2377
-      become: yes
+#    - name: Add nodes
+#      docker_swarm:
+#        state: join
+#        advertise_addr: "{{ own_ip }}"
+#        join_token: vars.frank
+#        remote_addrs: 10.0.0.4:2377
+#      become: yes
