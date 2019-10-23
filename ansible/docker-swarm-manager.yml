@@ -24,6 +24,21 @@
     - set_fact:
         worker_join_token: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
         cacheable: yes
+        
+    - name: Make sure vars.yml is absent
+      file:
+        path: "{{ default_save_path }}"
+        state: absent
+        force: true
+      become: yes
+        
+    - name: Copy file with owner and permissions
+      copy:
+        src: "/home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars/vars.yml"
+        dest: "{{ default_save_path }}"
+        owner: foo
+        group: foo
+        mode: '0644'
 
     - name: Store variable in file
       blockinfile:
