@@ -32,4 +32,4 @@
       pip:
         name: docker
         virtualenv: /home/Loek/.venv
-        virtualenv_python: python3.6
+        virtualenv_python: python3
