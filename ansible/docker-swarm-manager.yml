@@ -27,14 +27,22 @@
         
     - name: Make sure vars.yml is absent
       file:
-        path: "{{ default_save_path }}"
+        path: "/home/Zilk/vars/vars.yml"
         state: absent
         force: true
       become: yes
+      
+    - name: Create vars directory and set file ownership, group and permissions
+      file:
+        path: "/home/Zilk/vars"
+        state: touch
+        owner: "{{ default_owner }}"
+        group: "{{ default_group }}"
+        mode: '0644'
         
     - name: Create vars.yml file and set file ownership, group and permissions
       file:
-        path: "{{ default_save_path }}"
+        path: "/home/Zilk/vars/vars.yml"
         state: touch
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
