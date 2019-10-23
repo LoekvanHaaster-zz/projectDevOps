@@ -1,0 +1,9 @@
+---
+- hosts: workers
+
+  tasks:        
+    - name: copy vars.yml to workers
+      copy:
+        src: /home/Loek/vars.yml
+        dest: /home/Zilk/vars.yml
+        remote_src: yes
