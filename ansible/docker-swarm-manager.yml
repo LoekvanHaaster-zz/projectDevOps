@@ -2,7 +2,6 @@
 - hosts: managers
 
   vars:
-    default_save_1path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/
     default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
     default_owner: Loek
     default_group: Loek
@@ -35,11 +34,12 @@
 
     - name: Create vars.yml file and set file ownership, group and permissions
       file:
-        path: "{{ default_save_1path }}"
+        path: "{{ default_save_path }}"
         state: touch
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
         mode: '0644'
+      become: yes
 
     - name: Store variable in file
       blockinfile:
