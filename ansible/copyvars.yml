@@ -1,0 +1,61 @@
+---
+- hosts: managers
+
+  vars:
+    default_save_path: /home/Zilk/vars.yml
+    default_owner: Zilk
+    default_group: Zilk
+    own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
+
+  tasks:
+    - name: Remove potential existing swarm hosts
+      docker_swarm:
+        state: absent
+        force: true
+      become: yes
+
+    - name: Create a swarm host and prepare to save to set_fact
+      docker_swarm:
+        state: present
+        advertise_addr: "{{ own_ip+':2377' }}"
+      become: yes
+      register: local_own_swarm
+
+    - set_fact:
+        worker_join_token: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
+        cacheable: yes
+        
+    - name: Make sure vars.yml is absent
+      file:
+        path: "{{ default_save_path }}"
+        state: absent
+        force: true
+      become: yes
+        
+    - name: Create vars.yml file and set file ownership, group and permissions
+      file:
+        path: "{{ default_save_path }}"
+        state: touch
+        owner: "{{ default_owner }}"
+        group: "{{ default_group }}"
+        mode: '0644'
+
+    - name: Store variable in file
+      blockinfile:
+        path: "{{ default_save_path }}"
+        block: |
+          ---
+          frank: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
+          tiffany: "{{ own_ip+':2377' }}"
+
+    - name: Remove block markers
+      lineinfile:
+        path: "{{ default_save_path }}"
+        state: absent
+        regexp: '^# BEGIN'
+
+    - name: Remove block markers
+      lineinfile:
+        path: "{{ default_save_path }}"
+        state: absent
+        regexp: '^# END'
