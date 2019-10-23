@@ -3,8 +3,8 @@
 
   vars:
     default_save_path: /home/Zilk/vars/vars.yml
-    default_owner: Zilk
-    default_group: Zilk
+    default_owner: root
+    default_group: root
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
@@ -36,17 +36,17 @@
       file:
         path: "/home/Zilk/vars"
         state: directory
+        owner: "{{ default_owner }}"
+        group: "{{ default_group }}"
         mode: '0644'
-      become: yes
-      become_user: Zilk
         
     - name: Create vars.yml file and set file ownership, group and permissions
       file:
         path: "/home/Zilk/vars/vars.yml"
         state: touch
+        owner: "{{ default_owner }}"
+        group: "{{ default_group }}"
         mode: '0644'
-      become: yes
-      become_user: Zilk
 
     - name: Store variable in file
       blockinfile:
