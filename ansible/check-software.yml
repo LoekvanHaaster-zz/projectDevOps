@@ -1,12 +1,23 @@
 ---
-- hosts: workers
 
-  vars:
-    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
-    own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
+- hosts: all
 
   tasks:
-    - name: Include vars of vars.yaml into the 'vars'
-      include_vars:
-        file: "{{ default_save_path }}"
-        name: vars
+  - name: Run the equivalent of "apt-get update" as a separate step
+    apt:
+      update_cache: yes
+  - name: apt install needed software
+    apt: name={{ item }} state=latest update_cache=yes
+    loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python', 'python3', 'python-pip', 'python3-pip', 'virtualenv', 'python-setuptools', 'python3-setuptools']
+  - name: install needed software
+    block:
+      - name: pip docker
+        pip:
+          name: docker
+          state: latest
+        become: yes
+      - name: pip docker-compose
+        pip:
+          name: docker-compose
+          state: latest
+        become: yes
