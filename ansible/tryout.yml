@@ -29,7 +29,7 @@
       apt: update_cache=yes name=docker-ce state=latest
       
     - name: Install setuptools
-      pip:
+      apt:
         name: setuptools
         state: latest
 
