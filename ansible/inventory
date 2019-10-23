@@ -1,5 +1,5 @@
 [local]
-manager-01      ansible_host=localhost          ansible_user=Loek
+buildagent      ansible_host=localhost          ansible_user=Loek
 
 [managers]
 manager-01      ansible_host=10.0.0.4          ansible_user=Zilk
