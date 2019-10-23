@@ -2,9 +2,9 @@
 - hosts: managers
 
   vars:
-    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
-    default_owner: Loek
-    default_group: Loek
+    default_save_path: /home/Zilk/vars.yml
+    default_owner: Zilk
+    default_group: Zilk
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
@@ -32,12 +32,12 @@
         force: true
       become: yes
         
-    - name: Copy file with owner and permissions
-      copy:
-        src: "/home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars/vars.yml"
-        dest: "{{ default_save_path }}"
-        owner: foo
-        group: foo
+    - name: Create vars.yml file and set file ownership, group and permissions
+      file:
+        path: "{{ default_save_path }}"
+        state: touch
+        owner: "{{ default_owner }}"
+        group: "{{ default_group }}"
         mode: '0644'
 
     - name: Store variable in file
@@ -59,11 +59,3 @@
         path: "{{ default_save_path }}"
         state: absent
         regexp: '^# END'
-
-#    - name: Add nodes
-#      docker_swarm:
-#        state: join
-#        advertise_addr: "{{ own_ip }}"
-#        join_token: vars.frank
-#        remote_addrs: 10.0.0.4:2377
-#      become: yes
