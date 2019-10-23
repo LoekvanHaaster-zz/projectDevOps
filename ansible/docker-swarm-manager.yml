@@ -39,7 +39,6 @@
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
         mode: '0644'
-      become: yes
 
     - name: Store variable in file
       blockinfile:
