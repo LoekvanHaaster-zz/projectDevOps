@@ -28,5 +28,5 @@
         state: join
         advertise_addr: "{{ own_ip }}"
         join_token: vars.frank
-        remote_addrs: vars.tiffany
+        remote_addrs: [ vars.tiffany ]
       become: yes
