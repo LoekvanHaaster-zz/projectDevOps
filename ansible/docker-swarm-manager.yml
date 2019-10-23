@@ -35,7 +35,7 @@
     - name: Create vars directory and set file ownership, group and permissions
       file:
         path: "/home/Zilk/vars"
-        state: touch
+        state: directory
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
         mode: '0644'
