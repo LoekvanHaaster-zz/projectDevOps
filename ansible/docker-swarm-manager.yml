@@ -2,7 +2,7 @@
 - hosts: managers
 
   vars:
-    default_save_path: /home/Zilk/vars/vars.yml
+    default_save_path: /home/Zilk/vars.yml
     default_owner: root
     default_group: root
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
@@ -27,33 +27,19 @@
         
     - name: Make sure vars.yml is absent
       file:
-        path: "/home/Zilk/vars/vars.yml"
+        path: "{{ default_save_path }}"
         state: absent
         force: true
       become: yes
       
-    - name: Create vars directory and set file ownership, group and permissions
-      file:
-        path: "/home/Zilk/vars"
-        state: directory
-        owner: "{{ default_owner }}"
-        group: "{{ default_group }}"
-        
-    
-    - name: Get vars.yml from manager
-      fetch:
-        src: /home/Zilk/vars/vars.yml
-        dest: /home/Loek/vars.yml
-        mode: '0644'
-        
     - name: Create vars.yml file and set file ownership, group and permissions
       file:
-        path: "/home/Zilk/vars/vars.yml"
+        path: "{{ default_save_path }}"
         state: touch
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
         mode: '0644'
-
+        
     - name: Store variable in file
       blockinfile:
         path: "{{ default_save_path }}"
@@ -73,3 +59,9 @@
         path: "{{ default_save_path }}"
         state: absent
         regexp: '^# END'
+        
+    - name: Get vars.yml from manager
+      fetch:
+        src: "{{ default_save_path }}"
+        dest: /home/Loek/vars.yml
+        mode: '0644'
