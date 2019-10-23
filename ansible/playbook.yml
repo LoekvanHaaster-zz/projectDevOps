@@ -1,6 +1,7 @@
 ---
 
 - hosts: all
+  - include: fix-security.yml
   - include: check-software.yml
   - include: docker-swarm-mananger.yml
   - include: docker-swarm-worker.yml
