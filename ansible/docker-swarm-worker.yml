@@ -2,7 +2,7 @@
 - hosts: workers
 
   vars:
-    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
+    default_save_path: /home/Zilk/vars.yml
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
