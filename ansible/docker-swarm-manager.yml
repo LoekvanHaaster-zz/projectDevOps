@@ -25,21 +25,6 @@
         worker_join_token: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
         cacheable: yes
 
-    - name: Make sure vars.yml is absent
-      file:
-        path: /home/Loek/vars.yml
-        state: absent
-        force: true
-      become: yes
-
-    - name: Create vars.yml file and set file ownership, group and permissions
-      file:
-        path: /home/Loek/vars.yml
-        state: touch
-        owner: "{{ default_owner }}"
-        group: "{{ default_group }}"
-        mode: '0644'
-
     - name: Store variable in file
       blockinfile:
         path: "{{ default_save_path }}"
