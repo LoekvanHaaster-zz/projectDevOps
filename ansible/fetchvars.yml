@@ -1,8 +1,0 @@
----
-- hosts: managers
-
-  tasks:
-    - name: Get vars.yml from manager
-      fetch:
-        src: /home/Zilk/vars/vars.yml
-        dest: /home/Loek/vars.yml
