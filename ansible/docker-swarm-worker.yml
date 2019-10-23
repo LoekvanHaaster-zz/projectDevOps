@@ -15,8 +15,11 @@
       include_vars:
         dir: /home/Zilk
         files_matching: vars.yaml
-        name: node
-
+        
+    - debug: msg="Hello, {{ frank }}!"
+    
+    - debug: msg="Hello, {{ tiffany }}!"
+    
     - name: Remove potential existing swarm hosts
       docker_swarm:
         state: absent
@@ -27,6 +30,6 @@
       docker_swarm:
         state: join
         advertise_addr: "{{ own_ip }}"
-        join_token: "{{ node.frank }}"
-        remote_addrs: [ "{{ node.tiffany }}" ]
+        join_token: "{{ frank }}"
+        remote_addrs: "[ {{ tiffany }} ]"
       become: yes
