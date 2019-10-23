@@ -16,9 +16,11 @@
         dir: /home/Zilk
         files_matching: vars.yaml
         
-    - debug: msg="Hello, {{ frank }}!"
+    - debug:
+        msg: "{{ frank }}"
     
-    - debug: msg="Hello, {{ tiffany }}!"
+    - debug:
+        msg: "{{ tiffany }}"
     
     - name: Remove potential existing swarm hosts
       docker_swarm:
