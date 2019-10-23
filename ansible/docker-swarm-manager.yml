@@ -34,7 +34,7 @@
 
     - name: Create vars.yml file and set file ownership, group and permissions
       file:
-        path: "{{ default_save_path }}"
+        path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
         state: touch
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
