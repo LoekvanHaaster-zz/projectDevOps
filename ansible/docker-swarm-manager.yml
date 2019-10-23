@@ -63,5 +63,5 @@
     - name: Get vars.yml from manager
       fetch:
         src: "{{ default_save_path }}"
-        dest: /home/Loek/vars.yml
+        dest: /home/Loek
         mode: '0644'
