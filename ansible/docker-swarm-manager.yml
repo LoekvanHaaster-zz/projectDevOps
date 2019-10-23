@@ -3,8 +3,8 @@
 
   vars:
     default_save_path: /home/Zilk/vars.yml
-    default_owner: root
-    default_group: root
+    default_owner: Zilk
+    default_group: Zilk
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
