@@ -31,4 +31,5 @@
     - name: Install Docker Module for Python
       pip:
         name: docker
-        executable: /usr/bin/python
+        virtualenv: /home/Loek/.venv
+        virtualenv_python: python3.6
