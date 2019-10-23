@@ -15,6 +15,10 @@
       include_vars:
         dir: /home/Zilk
         file: vars.yaml
+      resgister: include_vars_result
+
+    - debug:
+        var: include_vars_result
         
     - debug:
         msg: "{{ frank }}"
