@@ -2,7 +2,8 @@
 - hosts: workers
 
   vars:
-    own_ip = "{{ ansible_facts.eth0.ipv4.address }}"
+    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
+    own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
     - name: Include vars of vars.yaml into the 'vars'
@@ -21,5 +22,5 @@
         state: join
         advertise_addr: "{{ own_ip }}"
         join_token: vars.frank
-        remote_addrs: 10.0.0.4:2377
+        remote_addrs: vars.tiffany
       become: yes

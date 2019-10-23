@@ -1,0 +1,12 @@
+---
+- hosts: workers
+
+  vars:
+    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
+    own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
+
+  tasks:
+    - name: Include vars of vars.yaml into the 'vars'
+      include_vars:
+        file: "{{ default_save_path }}"
+        name: vars
