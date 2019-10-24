@@ -78,7 +78,7 @@
 
     - name: pull an image
       docker_image:
-        name: dockersamples/visualizer
+        name: nginx
         source: pull
         
     - name: kill container if exists
@@ -89,6 +89,6 @@
     - name: Create a container
       docker_container:
         name: "{{ containername }}"
-        image: visualizer
-        ports: 5000:8080
+        image: nginx
+        ports: 80:80
         state: started
