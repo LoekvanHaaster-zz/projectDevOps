@@ -1,6 +1,6 @@
 ---
 
-- hosts: all
+- hosts: remotes
   tasks:
     - name: Ensure Zilk is present and added to sudo group
       user:
