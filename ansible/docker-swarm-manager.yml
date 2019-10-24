@@ -9,7 +9,7 @@
     registry_address: sharedregistry.azurecr.io
     registry_username: 465b25fb-66ed-40b4-ad5e-69153681991b
     registry_password: bda62a70-76aa-4c67-80a9-b4e7c1ef3b20
-    containername: testcontainer
+    containername: visu
 
   tasks:
     - name: Remove potential existing swarm hosts
@@ -70,15 +70,15 @@
         dest: /home/Loek
         mode: '0644'
         
-    - name: Log into private registry and force re-authorization
-      docker_login:
-        registry: "{{ registry_address }}"
-        username: "{{ registry_username }}"
-        password: "{{ registry_password }}"
+#    - name: Log into private registry and force re-authorization
+#      docker_login:
+#        registry: "{{ registry_address }}"
+#        username: "{{ registry_username }}"
+#        password: "{{ registry_password }}"
 
     - name: pull an image
       docker_image:
-        name: sharedregistry.azurecr.io/marnix_php:latest
+        name: dockersamples/visualizer
         source: pull
         
     - name: kill container if exists
@@ -89,6 +89,6 @@
     - name: Create a container
       docker_container:
         name: "{{ containername }}"
-        image: marnix_php:latest
-        ports: 80:80
+        image: visualizer
+        ports: 5000:8080
         state: started
