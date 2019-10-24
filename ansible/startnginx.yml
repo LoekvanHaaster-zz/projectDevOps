@@ -11,7 +11,7 @@
 
     - name: pull loekamy image
       docker_image:
-        name: nginx
+        name: sharedregistry.azurecr.io/loekamy:latest
         source: pull
       
     - name: Remove service
@@ -20,5 +20,5 @@
         state: absent
       
     - name: create docker service visualizer
-      command: docker service create --name=my_web --replicas=3 --publish=80:80/tcp nginx
+      command: docker service create --name=my_web --replicas=3 --publish=80:80/tcp sharedregistry.azurecr.io/loekamy:latest
       become: yes
