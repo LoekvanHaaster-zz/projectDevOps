@@ -69,12 +69,6 @@
         src: "{{ default_save_path }}"
         dest: /home/Loek
         mode: '0644'
-        
-#    - name: Log into private registry and force re-authorization
-#      docker_login:
-#        registry: "{{ registry_address }}"
-#        username: "{{ registry_username }}"
-#        password: "{{ registry_password }}"
 
     - name: pull visualizer image
       docker_image:
