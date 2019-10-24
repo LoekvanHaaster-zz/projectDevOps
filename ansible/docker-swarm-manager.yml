@@ -80,24 +80,11 @@
       docker_image:
         name: dockersamples/visualizer
         source: pull
-        
+      
     - name: create docker service visualizer
       command: docker service create --name=viz --publish=5000:8080/tcp --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
       become: yes
-        
-    - name: pull an image
-      docker_image:
-        name: nginx
-        source: pull
-        
-    - name: kill container if exists
-      docker_container:
-        name: "{{ containername }}"
-        state: absent
-  
-    - name: Create a container
-      docker_container:
-        name: "{{ containername }}"
-        image: nginx
-        ports: 80:80
-        state: started
+      
+    - name: create docker service visualizer
+      command: docker service create --name my_web --replicas 3 --publish published=80,target=80 nginx
+      become: yes
