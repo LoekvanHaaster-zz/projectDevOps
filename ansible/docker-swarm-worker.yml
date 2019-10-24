@@ -9,12 +9,6 @@
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
         file: /home/Loek/manager-01/home/Zilk/vars.yml
-        
-    - debug:
-        msg: "{{ frank }}"
-    
-    - debug:
-        msg: "{{ tiffany }}"
     
     - name: Remove potential existing swarm hosts
       docker_swarm:
