@@ -1,0 +1,17 @@
+---
+- hosts: managers
+
+  tasks:
+    - name: pull nginx image
+      docker_image:
+        name: nginx
+        source: pull
+      
+    - name: Remove service
+      docker_swarm_service:
+        name: my_web
+        state: absent
+      
+    - name: create docker service visualizer
+      command: docker service create --name my_web --replicas 3 --publish published=80,target=80 nginx
+      become: yes
