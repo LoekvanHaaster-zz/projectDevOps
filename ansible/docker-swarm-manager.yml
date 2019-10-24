@@ -79,6 +79,11 @@
       docker_swarm_service:
         name: viz
         state: absent
+        
+    - name: Remove service
+      docker_swarm_service:
+        name: viz
+        state: absent
       
     - name: create docker service visualizer
       command: docker service create --name=viz --publish=5000:8080/tcp --constraint=node.role==manager --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
