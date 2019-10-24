@@ -1,0 +1,12 @@
+---
+
+- hosts: all
+  tasks:
+    - name: login to docker registry
+      command: docker login sharedregistry.azurecr.io -u 465b25fb-66ed-40b4-ad5e-69153681991b -p bda62a70-76aa-4c67-80a9-b4e7c1ef3b20
+      
+    - name: pull the image
+      command: docker pull sharedregistry.azurecr.io/loekamy:latest
+    
+    - name: run the image
+      command: docker run -it -d --rm -p 80:80 sharedregistry.azurecr.io/loekamy:latest

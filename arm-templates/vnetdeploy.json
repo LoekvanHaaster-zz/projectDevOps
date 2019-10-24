@@ -190,6 +190,20 @@
               "priority": 100,
               "direction": "Inbound"
             }
+          },
+          {
+            "name": "HTTP",
+            "properties": {
+              "description": "Allows HTTP traffic",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5000",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            }
           }
         ]
       }
@@ -346,6 +360,25 @@
                 "id": "[variables('lbProbeID')]"
               }
             }
+          },
+          {
+            "name": "LBRule2",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID')]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 5000,
+              "backendPort": 5000,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "probe": {
+                "id": "[variables('lbProbeID')]"
+              }
+            }
           }
         ],
         "probes": [
@@ -354,6 +387,15 @@
             "properties": {
               "protocol": "Tcp",
               "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          },
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 5000,
               "intervalInSeconds": 5,
               "numberOfProbes": 2
             }
@@ -469,6 +511,34 @@
                   ],
                   "translatedAddress": "10.0.1.6",
                   "translatedPort": "80"
+                }
+              ]
+            }
+          },
+          {
+            "name": "natRc2",
+            "properties": {
+              "priority": "110",
+              "action": {
+                "type": "DNAT"
+              },
+              "rules": [
+                {
+                  "name": "natRule1",
+                  "sourceAddresses": [
+                    "*"
+                  ],
+                  "destinationAddresses": [
+                    "[reference(variables('publicIPAddressID')).IpAddress]"
+                  ],
+                  "destinationPorts": [
+                    "5000"
+                  ],
+                  "protocols": [
+                    "TCP"
+                  ],
+                  "translatedAddress": "10.0.1.6",
+                  "translatedPort": "5000"
                 }
               ]
             }
