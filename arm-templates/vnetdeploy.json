@@ -103,6 +103,7 @@
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
     "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
+    "lbProbeID2": "[concat(variables('lbID'),'/probes/tcpProbe2')]",
     "imagePublisher": "Canonical",
     "imageOffer": "UbuntuServer",
     "linuxConfiguration": {
@@ -376,7 +377,7 @@
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 5,
               "probe": {
-                "id": "[variables('lbProbeID')]"
+                "id": "[variables('lbProbeID2')]"
               }
             }
           }
