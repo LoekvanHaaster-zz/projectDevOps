@@ -35,8 +35,3 @@
       docker_image:
         name: sharedregistry.azurecr.io/loekamy:latest
         source: pull
-      
-    - name: Remove service
-      docker_swarm_service:
-        name: webserver
-        state: absent
