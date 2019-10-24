@@ -6,6 +6,9 @@
     default_owner: Zilk
     default_group: Zilk
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
+    registry_address: sharedregistry.azurecr.io
+    registry_username: 465b25fb-66ed-40b4-ad5e-69153681991b
+    registry_password: bda62a70-76aa-4c67-80a9-b4e7c1ef3b20
 
   tasks:
     - name: Remove potential existing swarm hosts
