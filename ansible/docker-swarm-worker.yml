@@ -3,6 +3,7 @@
 
   vars:
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
+    containername: webserver
 
   tasks:
     
@@ -23,3 +24,20 @@
         join_token: "{{ frank }}"
         remote_addrs: "{{ tiffany }}"
       become: yes
+      
+    - name: pull an image
+      docker_image:
+        name: nginx
+        source: pull
+        
+    - name: kill container if exists
+      docker_container:
+        name: "{{ containername }}"
+        state: absent
+  
+    - name: Create a container
+      docker_container:
+        name: "{{ containername }}"
+        image: nginx
+        ports: 80:80
+        state: started
