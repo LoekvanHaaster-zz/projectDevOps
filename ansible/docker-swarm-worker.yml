@@ -25,7 +25,18 @@
         remote_addrs: "{{ tiffany }}"
       become: yes
       
-    - name: pull an image
+    - name: Log into private registry and force re-authorization
+      docker_login:
+        registry: sharedregistry.azurecr.io
+        username: 465b25fb-66ed-40b4-ad5e-69153681991b
+        password: bda62a70-76aa-4c67-80a9-b4e7c1ef3b20
+
+    - name: pull loekamy image
       docker_image:
-        name: nginx
+        name: sharedregistry.azurecr.io/loekamy:latest
         source: pull
+      
+    - name: Remove service
+      docker_swarm_service:
+        name: webserver
+        state: absent
