@@ -13,5 +13,5 @@
         state: absent
       
     - name: create docker service visualizer
-      command: docker service create --name my_web --replicas 3 --publish published=80,target=80 nginx
+      command: docker service create --name=my_web --replicas=3 --publish=80:80/tcp nginx
       become: yes
