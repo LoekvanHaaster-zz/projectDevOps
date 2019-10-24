@@ -72,5 +72,4 @@
       changed_when: false
 
     - name: Start visualization container
-      command: docker run -it -d -p 5000:8080 -e HOST={{ ansible_nodename }} -v /var/run/docker.sock:/var/run/docker.sock {{ platform[architecture]['docker_swarm_visualization_image'] }}:latest
-      when: "docker_ps.stdout.find('{{ platform[architecture]['docker_swarm_visualization_image'] }}') == -1"
+      command: sudo apt install unzip wget https://github.com/dockersamples/docker-swarm-visualizer/archive/master.zip unzip master.zip mv docker-swarm-visualizer-master dockersamples docker run -it -d -p 5000:8080 -v /var/run/docker.sock:/var/run/docker.sock dockersamples/visualizer
