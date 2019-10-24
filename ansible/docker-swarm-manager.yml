@@ -66,5 +66,25 @@
         dest: /home/Loek
         mode: '0644'
         
-    - name: Start visualization container
-      command: sudo docker service create --name=viz --publish=5000:8080/tcp --constraint=node.role==manage --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
+    - name: Log into private registry and force re-authorization
+        docker_login:
+          registry: "{{ registry_address }}"
+          username: "{{ registry_username }}"
+          password: "{{ registry_password }}"
+          reauthorize: yes 
+
+    - name: pull an image
+        docker_image:
+        name: sharedregistry.azurecr.io/loekamy:latest
+        source: pull
+  
+    - name: Create a container
+      docker_container:
+        name: testcontainer
+        image: loekamy:latest
+        exposed_ports:
+          - 80
+        state: started
+        
+#    - name: Start visualization container
+#      command: sudo docker service create --name=viz --publish=5000:8080/tcp --constraint=node.role==manage --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock dockersamples/visualizer
