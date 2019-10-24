@@ -13,7 +13,7 @@
 
     - name: Install required system packages
       apt: name={{ item }} state=latest update_cache=yes
-      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python', 'python-pip', 'python3', 'python3-pip', 'virtualenv', 'python3-setuptools', 'python-setuptools']
 
     - name: Add Docker GPG apt Key
       apt_key:
@@ -27,22 +27,7 @@
 
     - name: Update apt and install docker-ce
       apt: update_cache=yes name=docker-ce state=latest
-
+      
     - name: Install Docker Module for Python
       pip:
         name: docker
-
-    # Pull image specified by variable default_image from the Docker Hub
-    - name: Pull default Docker image
-      docker_image:
-        name: "{{ default_container_image }}"
-        source: pull
-
-    # Creates the number of containers defined by the variable create_containers, using default values
-    - name: Create default containers
-      docker_container:
-        name: "{{ default_container_name }}{{ item }}"
-        image: "{{ default_container_image }}"
-        command: "{{ default_container_command }}"
-        state: present
-      with_sequence: count={{ create_containers }}

@@ -2,9 +2,9 @@
 - hosts: managers
 
   vars:
-    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
-    default_owner: Loek
-    default_group: Loek
+    default_save_path: /home/Zilk/vars.yml
+    default_owner: Zilk
+    default_group: Zilk
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
@@ -24,14 +24,14 @@
     - set_fact:
         worker_join_token: "{{ local_own_swarm.swarm_facts.JoinTokens.Worker }}"
         cacheable: yes
-
+        
     - name: Make sure vars.yml is absent
       file:
         path: "{{ default_save_path }}"
         state: absent
         force: true
       become: yes
-
+      
     - name: Create vars.yml file and set file ownership, group and permissions
       file:
         path: "{{ default_save_path }}"
@@ -39,7 +39,7 @@
         owner: "{{ default_owner }}"
         group: "{{ default_group }}"
         mode: '0644'
-
+        
     - name: Store variable in file
       blockinfile:
         path: "{{ default_save_path }}"
@@ -59,11 +59,18 @@
         path: "{{ default_save_path }}"
         state: absent
         regexp: '^# END'
+        
+    - name: Copy vars.yml from manager to buildagent
+      fetch:
+        src: "{{ default_save_path }}"
+        dest: /home/Loek
+        mode: '0644'
+        
+    - name: Check if the visualization container is running
+      command: docker ps
+      register: docker_ps
+      changed_when: false
 
-#    - name: Add nodes
-#      docker_swarm:
-#        state: join
-#        advertise_addr: "{{ own_ip }}"
-#        join_token: vars.frank
-#        remote_addrs: 10.0.0.4:2377
-#      become: yes
+    - name: Start visualization container
+      command: docker run -it -d -p 5000:8080 -e HOST={{ ansible_nodename }} -v /var/run/docker.sock:/var/run/docker.sock {{ platform[architecture]['docker_swarm_visualization_image'] }}:latest
+      when: "docker_ps.stdout.find('{{ platform[architecture]['docker_swarm_visualization_image'] }}') == -1"

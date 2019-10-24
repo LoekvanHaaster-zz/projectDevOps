@@ -2,15 +2,20 @@
 - hosts: workers
 
   vars:
-    default_save_path: /home/Loek/myagent/_work/r1/a/_BuildLine/ansible/vars.yml
     own_ip: "{{ ansible_facts.eth0.ipv4.address }}"
 
   tasks:
+    
     - name: Include vars of vars.yaml into the 'vars'
       include_vars:
-        file: "{{ default_save_path }}"
-        name: vars
-
+        file: /home/Loek/manager-01/home/Zilk/vars.yml
+        
+    - debug:
+        msg: "{{ frank }}"
+    
+    - debug:
+        msg: "{{ tiffany }}"
+    
     - name: Remove potential existing swarm hosts
       docker_swarm:
         state: absent
@@ -21,6 +26,6 @@
       docker_swarm:
         state: join
         advertise_addr: "{{ own_ip }}"
-        join_token: vars.frank
-        remote_addrs: vars.tiffany
+        join_token: "{{ frank }}"
+        remote_addrs: "{{ tiffany }}"
       become: yes
