@@ -78,7 +78,7 @@
 
     - name: pull an image
       docker_image:
-        name: sharedregistry.azurecr.io/loekamy:latest
+        name: sharedregistry.azurecr.io/marnix_php:latest
         source: pull
         
     - name: kill container if exists
@@ -89,6 +89,6 @@
     - name: Create a container
       docker_container:
         name: "{{ containername }}"
-        image: loekamy:latest
+        image: marnix_php:latest
         ports: 80:80
         state: started
