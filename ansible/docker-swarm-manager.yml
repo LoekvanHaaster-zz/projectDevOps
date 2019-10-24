@@ -79,10 +79,10 @@
       docker_swarm_service:
         name: viz
         state: absent
-        
+      
     - name: Remove service
       docker_swarm_service:
-        name: viz
+        name: webserver
         state: absent
       
     - name: create docker service visualizer
